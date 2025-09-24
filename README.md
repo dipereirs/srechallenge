@@ -93,7 +93,7 @@ Feel free to check these boxes in your copy along the way. If you want to leave 
 ## Build
 - [X] Finish the dockerfile to run this project 
   - Notes: I have added docker-compose to build and run both postgres and the service as I opted to use postgres
-- [ ] Finish the github action to build the docker image (no need to push anywhere if you don't want to)
+- [X] Finish the github action to build the docker image (no need to push anywhere if you don't want to)
 
 ## Test
 - [ ] Create a github actions workflow that runs the tests on each pull_request
