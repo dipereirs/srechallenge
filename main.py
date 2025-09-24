@@ -46,6 +46,7 @@ elif settings.database_type == "postgres":
     dumbkv = PostgresDumbKV(settings.database_location)
 else:
     raise ValueError(f"Unsupported database type: {settings.database_type}")
+dumbkv.create_table()
 
 # UI routes
 @api.get("/", include_in_schema=False)
