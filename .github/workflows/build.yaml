@@ -38,8 +38,6 @@ jobs:
           file: Dockerfile
           target: dumbkv-main
           push: true
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository }}:buildcache,mode=max
           tags: |
             ghcr.io/${{ github.repository }}:main
             ghcr.io/${{ github.repository }}:main-${{ github.sha }}
