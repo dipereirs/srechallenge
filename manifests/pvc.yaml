@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dumbkv-pvc
+  labels:
+    app: dumbkv
+spec:
+  accessModes:
+    - ReadWriteOnce # Can be mounted by one node at a time
+  resources:
+    requests:
+      storage: 1Gi # Request 1GB of storage
+  storageClassName: standard # Use Minikube's default storage class
