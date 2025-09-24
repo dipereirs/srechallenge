@@ -96,8 +96,8 @@ Feel free to check these boxes in your copy along the way. If you want to leave 
 - [X] Finish the github action to build the docker image (no need to push anywhere if you don't want to)
 
 ## Test
-- [ ] Create a github actions workflow that runs the tests on each pull_request
-- [ ] Create an additional test workflow that runs a postgres service and update the test config to use this postgres backend
+- [X] Create a github actions workflow that runs the tests on each pull_request
+- [X] Create an additional test workflow that runs a postgres service and update the test config to use this postgres backend
 
 ## Create the kubernetes manifests to run this service
 

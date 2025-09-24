@@ -22,5 +22,6 @@ CMD ["--log-config", "logging.yaml"]
 
 # Build for the test stage where we run the tests
 FROM dumbkv-base AS dumbkv-test
+ENV PYTHONPATH=/app
 ENTRYPOINT ["uv", "run", "pytest"]
-CMD ["-v", "--database-location", "postgres://postgres:postgres@localhost/postgres"]
+CMD ["-v"]
