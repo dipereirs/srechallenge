@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dumbkv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dumbkv
+  template:
+    metadata:
+      labels:
+        app: dumbkv
+    spec:
+      containers:
+        - name: dumbkv
+          image: ghcr.io/dipereirs/srechallenge:main
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_TYPE
+              value: "sqlite"
+            - name: DATABASE_LOCATION
+              value: "/data/dumbkvstore/dumbkv.db"
+          volumeMounts:
+            - name: dumbkv-storage
+              mountPath: /data/dumbkvstore
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: dumbkv-storage
+          persistentVolumeClaim:
+            claimName: dumbkv-pvc
