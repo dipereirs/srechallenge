@@ -2,10 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dumbkv-deployment
+  name: dumbkv
   labels:
     app.kubernetes.io/name: dumbkv
-    app.kubernetes.io/instance: dumbkv-deployment
+    app.kubernetes.io/instance: dumbkv
     app.kubernetes.io/version: "1.0.0"
     app.kubernetes.io/component: server
 spec:
@@ -17,15 +17,10 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: dumbkv
-        app.kubernetes.io/instance: dumbkv-deployment
+        app.kubernetes.io/instance: dumbkv
         app.kubernetes.io/version: "1.0.0"
         app.kubernetes.io/component: server
     spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000 # this means the user id of the first user in the system
-        runAsGroup: 1000
-        fsGroup: 1000
       initContainers:
         - name: wait-for-postgres
           image: postgres:15
@@ -80,10 +75,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: dumbkv-service
+  name: dumbkv
   labels:
     app.kubernetes.io/name: dumbkv
-    app.kubernetes.io/instance: dumbkv-service
+    app.kubernetes.io/instance: dumbkv
     app.kubernetes.io/version: "1.0.0"
     app.kubernetes.io/component: service
 spec:

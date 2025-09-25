@@ -27,6 +27,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: dumbkv-service
+                name: dumbkv
                 port:
                   number: 8000
