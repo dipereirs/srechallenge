@@ -1,16 +1,41 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dumbkv-pvc
+  labels:
+    app.kubernetes.io/name: dumbkv
+    app.kubernetes.io/instance: dumbkv-pvc
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: hostpath # Use Docker Desktop's default storage class
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dumbkv
+  name: dumbkv-deployment
+  labels:
+    app.kubernetes.io/name: dumbkv
+    app.kubernetes.io/instance: dumbkv-deployment
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dumbkv
+      app.kubernetes.io/name: dumbkv
   template:
     metadata:
       labels:
-        app: dumbkv
+        app.kubernetes.io/name: dumbkv
+        app.kubernetes.io/instance: dumbkv-deployment
+        app.kubernetes.io/version: "1.0.0"
+        app.kubernetes.io/component: server
     spec:
       containers:
         - name: dumbkv
@@ -41,3 +66,21 @@ spec:
         - name: dumbkv-storage
           persistentVolumeClaim:
             claimName: dumbkv-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dumbkv-service
+  labels:
+    app.kubernetes.io/name: dumbkv
+    app.kubernetes.io/instance: dumbkv-service
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: dumbkv
