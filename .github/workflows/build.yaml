@@ -31,6 +31,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build main service Docker image
         uses: docker/build-push-action@v5
         with:
@@ -38,6 +41,13 @@ jobs:
           file: Dockerfile
           target: dumbkv-main
           push: true
+          cache-from: type=local,src=/tmp/dumbkv-docker-cache
+          cache-to: type=local,dest=/tmp/dumbkv-docker-cache-temp,mode=max
           tags: |
             ghcr.io/${{ github.repository }}:main
             ghcr.io/${{ github.repository }}:main-${{ github.sha }}
+
+      - name: Move cache
+        run: |
+          rm -rf /tmp/dumbkv-docker-cache
+          mv /tmp/dumbkv-docker-cache-temp /tmp/dumbkv-docker-cache
