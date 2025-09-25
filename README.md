@@ -106,8 +106,8 @@ The manifests can be saved in a `manifests` directory.
 - [X] Create a deployment, including a health check, using the sqlite backend. We only need 1 replica, and we should prevent multiple instances from running
 - [X] Create a service
 - [X] Create a PVC and ensure the database directory is named `dumbkvstore`. The storage class name is `efs`
-- [ ] Create an ingress or gateway for the hostname `dumbkv.example.com`, the service will be available on the root path, the cert-manager cluster issuer is named `letsencrypt`
-- [ ] Update the kubernetes manifests to support the postgres backend
+- [X] Create an ingress or gateway for the hostname `dumbkv.example.com`, the service will be available on the root path, the cert-manager cluster issuer is named `letsencrypt`
+- [] Update the kubernetes manifests to support the postgres backend
 
 ## Monitoring
 - [ ] Create a service monitor objects for prometheus to scrape the metrics

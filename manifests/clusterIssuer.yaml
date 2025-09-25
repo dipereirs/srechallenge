@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+  labels:
+    app.kubernetes.io/name: cert-manager
+    app.kubernetes.io/instance: letsencrypt-issuer
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: issuer
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: diogo_pereira2005+tht-dumbkv@hotmail.com
+    privateKeySecretRef:
+      name: letsencrypt-private-key 
+    solvers:
+    - http01:
+        ingress:
+          class: nginx

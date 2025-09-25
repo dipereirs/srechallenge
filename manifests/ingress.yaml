@@ -7,19 +7,26 @@ metadata:
     app.kubernetes.io/instance: dumbkv-ingress
     app.kubernetes.io/version: "1.0.0"
     app.kubernetes.io/component: ingress
-
+  annotations:
+    # Enable HTTPS redirect
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Enable cert-manager for automatic SSL certificates
+    cert-manager.io/cluster-issuer: "letsencrypt"
 
 spec:
   ingressClassName: nginx # Use the nginx ingress controller
-
+  tls:
+    - hosts:
+        - dumbkv.example.com
+      secretName: dumbkv-tls
   rules:
-  - host: dumbkv.example.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: dumbkv-service
-            port:
-              number: 8000
+    - host: dumbkv.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dumbkv-service
+                port:
+                  number: 8000
