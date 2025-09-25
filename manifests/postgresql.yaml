@@ -1,0 +1,104 @@
+# PostgreSQL PVC for database storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/instance: postgres-pvc
+    app.kubernetes.io/version: "15.0"
+    app.kubernetes.io/component: storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: hostpath # Use Docker Desktop's default storage class
+---
+# PostgreSQL Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/instance: postgres-deployment
+    app.kubernetes.io/version: "15.0"
+    app.kubernetes.io/component: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/instance: postgres-deployment
+        app.kubernetes.io/version: "15.0"
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "dumbkv"
+            - name: POSTGRES_USER
+              value: "dumbkv"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: "/var/lib/postgresql/data/pgdata"
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - dumbkv
+                - -d
+                - dumbkv
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - dumbkv
+                - -d
+                - dumbkv
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+---
+# PostgreSQL Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  labels:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/instance: postgres-service
+    app.kubernetes.io/version: "15.0"
+    app.kubernetes.io/component: service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: postgres
