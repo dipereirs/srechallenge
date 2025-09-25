@@ -107,7 +107,7 @@ The manifests can be saved in a `manifests` directory.
 - [X] Create a service
 - [X] Create a PVC and ensure the database directory is named `dumbkvstore`. The storage class name is `efs`
 - [X] Create an ingress or gateway for the hostname `dumbkv.example.com`, the service will be available on the root path, the cert-manager cluster issuer is named `letsencrypt`
-- [] Update the kubernetes manifests to support the postgres backend
+- [X] Update the kubernetes manifests to support the postgres backend
 
 ## Monitoring
 - [ ] Create a service monitor objects for prometheus to scrape the metrics

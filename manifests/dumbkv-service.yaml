@@ -1,20 +1,4 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: dumbkv-pvc
-  labels:
-    app.kubernetes.io/name: dumbkv
-    app.kubernetes.io/instance: dumbkv-pvc
-    app.kubernetes.io/version: "1.0.0"
-    app.kubernetes.io/component: storage
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: hostpath # Use Docker Desktop's default storage class
----
+# DumbKV Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -37,6 +21,18 @@ spec:
         app.kubernetes.io/version: "1.0.0"
         app.kubernetes.io/component: server
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:15
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h postgres-service -p 5432 -U dumbkv; do
+                echo "Waiting for PostgreSQL to be ready..."
+                sleep 2
+              done
+              echo "PostgreSQL is ready!"
       containers:
         - name: dumbkv
           image: ghcr.io/dipereirs/srechallenge:main
@@ -44,12 +40,12 @@ spec:
             - containerPort: 8000
           env:
             - name: DATABASE_TYPE
-              value: "sqlite"
+              value: "postgres"
             - name: DATABASE_LOCATION
-              value: "/data/dumbkvstore/dumbkv.db"
-          volumeMounts:
-            - name: dumbkv-storage
-              mountPath: /data/dumbkvstore
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: DATABASE_URL
           livenessProbe:
             httpGet:
               path: /health
@@ -62,11 +58,8 @@ spec:
               port: 8000
             initialDelaySeconds: 5
             periodSeconds: 5
-      volumes:
-        - name: dumbkv-storage
-          persistentVolumeClaim:
-            claimName: dumbkv-pvc
 ---
+# DumbKV Service
 apiVersion: v1
 kind: Service
 metadata:
