@@ -25,13 +25,33 @@ helm install cert-manager jetstack/cert-manager \
   --set installCRDs=false
 ```
 
-### 3. Verify Installation
+### Verify Installation
 ```bash
 # Check NGINX Ingress Controller
 kubectl get pods -n ingress-nginx
 
 # Check cert-manager
 kubectl get pods -n cert-manager
+```
+
+### 3. Prometheus & Grafana (Monitoring Stack)
+```bash
+# Add Prometheus Helm repository
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+# Install Prometheus, Grafana, and AlertManager
+helm install prometheus prometheus-community/kube-prometheus-stack
+```
+
+### 4. Verify Monitoring Installation
+```bash
+# Check Prometheus pods
+kubectl get pods -l app.kubernetes.io/name=prometheus
+
+
+# Check ServiceMonitor CRD is available
+kubectl get crd | grep servicemonitor
 ```
 
 ## Deployment
@@ -72,3 +92,5 @@ kubectl apply -f ingress.yaml
 
 - The ClusterIssuer is configured for Let's Encrypt staging environment
 - Certificates will fail to issue due to fake domain, certificate will show as unsafe (maybe I did something wrong)
+- Node Exporter is crashing and I'm not sure why
+- ServiceMonitor was failing due to the `release: prometheus` label in prometheus so I had to add it
