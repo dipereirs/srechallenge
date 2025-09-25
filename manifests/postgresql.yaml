@@ -39,6 +39,8 @@ spec:
         app.kubernetes.io/version: "15.0"
         app.kubernetes.io/component: database
     spec:
+      securityContext:
+        runAsNonRoot: false
       containers:
         - name: postgres
           image: postgres:15
@@ -59,6 +61,13 @@ spec:
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
           livenessProbe:
             exec:
               command:

@@ -21,6 +21,11 @@ spec:
         app.kubernetes.io/version: "1.0.0"
         app.kubernetes.io/component: server
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000 # this means the user id of the first user in the system
+        runAsGroup: 1000
+        fsGroup: 1000
       initContainers:
         - name: wait-for-postgres
           image: postgres:15
@@ -36,6 +41,11 @@ spec:
       containers:
         - name: dumbkv
           image: ghcr.io/dipereirs/srechallenge:main
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8000
           env:
@@ -46,6 +56,13 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: DATABASE_URL
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
           livenessProbe:
             httpGet:
               path: /health
