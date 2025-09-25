@@ -36,17 +36,34 @@ kubectl get pods -n cert-manager
 
 ## Deployment
 
-1. Apply the ClusterIssuer:
+Deploy in the following order
+
+1. Apply the PostgreSQL secret:
 ```bash
-kubectl apply -f clusterIssuer.yaml
+kubectl apply -f postgressql-secret.yaml
 ```
 
-2. Apply the application manifests:
+2. Apply PostgreSQL database:
 ```bash
-kubectl apply -f deployment.yaml
+kubectl apply -f postgresql.yaml
 ```
 
-3. Apply the ingress:
+3. Wait for PostgreSQL to be ready:
+```bash
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=postgres --timeout=120s
+```
+
+4. Apply the DumbKV application:
+```bash
+kubectl apply -f dumbkv-service.yaml
+```
+
+5. Apply the ClusterIssuer:
+```bash
+kubectl apply -f cluster-issuer.yaml
+```
+
+6. Apply the ingress:
 ```bash
 kubectl apply -f ingress.yaml
 ```
