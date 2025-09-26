@@ -54,7 +54,6 @@ helm install prometheus prometheus-community/kube-prometheus-stack
 Verify if everything is working correctly
 
 ```bash
-# Check cert-manager
 kubectl get pods | grep prometheus
 # Check logs for any error or if it's restarting
 kubectl logs pods-found
