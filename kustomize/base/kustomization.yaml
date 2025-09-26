@@ -1,0 +1,14 @@
+# Base kustomization for DumbKV application
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - cert-manager/
+  - postgresql/
+  - dumbkv/
+  - cluster-issuer.yaml
+
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: dumbkv
+      app.kubernetes.io/managed-by: kustomize

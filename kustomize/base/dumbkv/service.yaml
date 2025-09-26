@@ -1,0 +1,19 @@
+# DumbKV Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: dumbkv
+  labels:
+    app.kubernetes.io/name: dumbkv
+    app.kubernetes.io/instance: dumbkv
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: service
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: dumbkv
